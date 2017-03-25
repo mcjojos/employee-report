@@ -32,4 +32,8 @@ public class Loader {
     public int departmentsSize() {
         return departments.size();
     }
+
+    public List<Department> getDepartments() {
+        return departments;
+    }
 }
