@@ -1,9 +1,12 @@
 package com.jojos.report.job;
 
 import com.jojos.report.data.Department;
+import com.jojos.report.data.Employee;
+import com.jojos.report.data.Genre;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Test to load all employees
@@ -30,8 +33,6 @@ public class LoadEmployeesTest {
         loader = new Loader();
 
         // load the departments first
-        Loader loader = new Loader();
-
         loader.load(department10);
         loader.load(department9);
         loader.load(department8);
@@ -46,14 +47,17 @@ public class LoadEmployeesTest {
 
     }
 
+    @Test
     public void loadEmployees() {
-        Employee employee1 = new Employee(6, "Opal Ballard", Genre.FEMALE, 4350.00);
-        Employee employee2 = new Employee(7, "Otis Bell", Genre.MALE, 2650.50);
+        Employee employee1 = new Employee(6, "Opal Ballard", Genre.FEMALE, 4350.00, 23);
+        Employee employee2 = new Employee(7, "Otis Bell", Genre.MALE, 2650.50, 35);
+        Employee employee3 = new Employee(7, "Lynne Ortiz", Genre.FEMALE, 2880.00, 28);
 
         loader.load(employee1);
         loader.load(employee2);
+        loader.load(employee3);
 
-        Assert.assertEquals(loader.getDepartmentForEmployee(employee1), department6);
-        Assert.assertEquals(loader.getDepartmentForEmployee(employee2), department7);
+        Assert.assertEquals(loader.getEmployeesForDepartment(department6).size(), 1);
+        Assert.assertEquals(loader.getEmployeesForDepartment(department7).size(), 2);
     }
 }
