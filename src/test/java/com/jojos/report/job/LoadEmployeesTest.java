@@ -1,5 +1,7 @@
 package com.jojos.report.job;
 
+import com.jojos.report.ApplicationException;
+import com.jojos.report.data.AgeRange;
 import com.jojos.report.data.Department;
 import com.jojos.report.data.Employee;
 import com.jojos.report.data.Genre;
@@ -59,5 +61,23 @@ public class LoadEmployeesTest {
 
         Assert.assertEquals(loader.getEmployeesForDepartment(department6).size(), 1);
         Assert.assertEquals(loader.getEmployeesForDepartment(department7).size(), 2);
+
+        Assert.assertTrue(loader.getAgeRanges().size() == AgeRange.values().length);
+
     }
+
+    @Test(expected = ApplicationException.class)
+    public void loadEmployeesWithInvalidDepartment() {
+        Employee employee1 = new Employee(0, "Opal Ballard", Genre.FEMALE, 4350.00, 23);
+
+        loader.load(employee1);
+    }
+
+    @Test(expected = ApplicationException.class)
+    public void loadEmployeesWithInvalidLargeDepartment() {
+        Employee employee1 = new Employee(11, "Opal Ballard", Genre.FEMALE, 4350.00, 23);
+
+        loader.load(employee1);
+    }
+
 }

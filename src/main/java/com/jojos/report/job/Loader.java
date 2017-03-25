@@ -1,17 +1,21 @@
 package com.jojos.report.job;
 
 import com.jojos.report.ApplicationException;
+import com.jojos.report.data.AgeRange;
 import com.jojos.report.data.Department;
 import com.jojos.report.data.Employee;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.stream.Stream;
 
 /**
  * The purpose of the loader class is to load departments, employees and it's attributes
@@ -28,6 +32,12 @@ public class Loader {
 
     private final List<Department> departments = new ArrayList<>();
     private final ConcurrentNavigableMap<Department, Set<Employee>> departmentToEmployee = new ConcurrentSkipListMap<>();
+    private final EnumMap<AgeRange, Set<Employee>> ageRanges;
+
+    public Loader() {
+        ageRanges = new EnumMap<>(AgeRange.class);
+        Stream.of(AgeRange.values()).forEach(ageRange -> ageRanges.put(ageRange, new HashSet<>()));
+    }
 
     /**
      * Store the provided department in memory. Don't allow any duplicates.
@@ -57,6 +67,7 @@ public class Loader {
         Department department = departments.get(employee.getDepartmentId() - 1);
         CollectorsUtil.addToContainedSet(departmentToEmployee, department, employee);
 
+
     }
 
     public int departmentsSize() {
@@ -69,6 +80,10 @@ public class Loader {
 
     public Set<Employee> getEmployeesForDepartment(Department department) {
         return departmentToEmployee.get(department);
+    }
+
+    public EnumMap<AgeRange, Set<Employee>> getAgeRanges() {
+        return ageRanges;
     }
 
     /**
