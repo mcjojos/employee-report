@@ -1,7 +1,9 @@
 package com.jojos.report;
 
 /**
- * @author gkaranikas
+ * Entry point of the application
+ *
+ * @author karanikasg@gmail.com
  */
 public class App {
 
