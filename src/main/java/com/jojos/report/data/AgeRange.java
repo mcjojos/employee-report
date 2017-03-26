@@ -23,8 +23,9 @@ public enum AgeRange {
     YEAR_70_80(70, 79),
     YEAR_80_90(80, 89),
     YEAR_90_100(90, 99),
-
-    UNDEFINED(0, 0);
+    YEAR_100_110(100, 109),
+    YEAR_110_120(110, 119),
+    YEAR_120_130(120, 129);
 
     private final int min;
     private final int max;
@@ -34,12 +35,17 @@ public enum AgeRange {
         this.max = max;
     }
 
+    @Override
+    public String toString() {
+        return min + "-" + max;
+    }
+
     public static AgeRange forAge(int age) {
         for (AgeRange ageRange : values()) {
             if (age <= ageRange.max) {
                 return ageRange;
             }
         }
-        return UNDEFINED;
+        return null;
     }
 }

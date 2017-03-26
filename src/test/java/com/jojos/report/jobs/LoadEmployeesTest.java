@@ -1,6 +1,5 @@
 package com.jojos.report.jobs;
 
-import com.jojos.report.ApplicationException;
 import com.jojos.report.data.AgeRange;
 import com.jojos.report.data.Department;
 import com.jojos.report.data.Employee;
@@ -8,6 +7,8 @@ import com.jojos.report.data.Genre;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Set;
 
 /**
  * Test to load all employees
@@ -17,16 +18,16 @@ import org.junit.Test;
 public class LoadEmployeesTest {
 
     private Loader loader;
-    Department department1 = new Department("A");
-    Department department2 = new Department("B");
-    Department department3 = new Department("C");
-    Department department4 = new Department("D");
-    Department department5 = new Department("E");
-    Department department6 = new Department("F");
-    Department department7 = new Department("G");
-    Department department8 = new Department("H");
-    Department department9 = new Department("I");
-    Department department10 = new Department("J");
+    private final Department department1 = new Department("A");
+    private final Department department2 = new Department("B");
+    private final Department department3 = new Department("C");
+    private final Department department4 = new Department("D");
+    private final Department department5 = new Department("E");
+    private final Department department6 = new Department("F");
+    private final Department department7 = new Department("G");
+    private final Department department8 = new Department("H");
+    private final Department department9 = new Department("I");
+    private final Department department10 = new Department("J");
 
     @Before
     public void setUp() {
@@ -94,18 +95,24 @@ public class LoadEmployeesTest {
         Assert.assertTrue(loader.getAgeRanges().size() == AgeRange.values().length);
     }
 
-    @Test(expected = ApplicationException.class)
+    @Test
     public void loadEmployeesWithInvalidDepartment() {
         Employee employee1 = new Employee(0, "Opal Ballard", Genre.FEMALE, 4350.00, 23);
 
         loader.load(employee1);
+
+        Set<Employee> employees = loader.getAllEmployees();
+        Assert.assertTrue(employees.isEmpty());
     }
 
-    @Test(expected = ApplicationException.class)
+    @Test
     public void loadEmployeesWithInvalidLargeDepartment() {
         Employee employee1 = new Employee(11, "Opal Ballard", Genre.FEMALE, 4350.00, 23);
 
         loader.load(employee1);
+
+        Set<Employee> employees = loader.getAllEmployees();
+        Assert.assertTrue(employees.isEmpty());
     }
 
 }

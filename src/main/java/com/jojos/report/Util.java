@@ -1,15 +1,73 @@
-package com.jojos.report.jobs;
+package com.jojos.report;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.concurrent.TimeUnit;
 
 /**
+ * Utility classes
+ *
  * @author karanikasg@gmail.com
  */
-public class CollectorsUtil {
+public class Util {
+
+    // input files
+    public static final String AGES_FILE = "ages.csv";
+    public static final String DEPARTMENTS_FILE = "departments.csv";
+    public static final String EMPLOYEES_FILE = "employees.csv";
+
+    // output files
+    public static final String INCOME_BY_DEPARTMENT = "income-by-department.csv";
+    public static final String INCOME_95_BY_DEPARTMENT = "income-95-by-department.csv";
+    public static final String INCOME_AVERAGE_BY_AGE_RANGE = "income-average-by-age-range.csv";
+    public static final String EMPLOYEE_AGE_BY_DEPARTMENT = "employee-age-by-department.csv";
+
+    public static final String DELIMITER = ",";
+
+
+    public static String longDuration(long start) {
+        long millis = System.currentTimeMillis() - start;
+        long minutes = TimeUnit.MILLISECONDS.toMinutes(millis);
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(minutes);
+        long secondsToMillis = TimeUnit.SECONDS.toMillis(seconds);
+        long minutesToMillis = TimeUnit.MINUTES.toMillis(minutes);
+        long mills = millis - secondsToMillis - minutesToMillis;
+        return String.format("%02dmin%02dsec%02dms", minutes, seconds, mills);
+    }
+
+    /**
+     * This class will get the command line arguments of the form
+     * -name1 value1 -name2 value2 -name3 value3
+     *
+     * @param commandLineArguments an array containing all the command line arguments
+     * @param argName the name of the arg you want to extract
+     * @return the value that corresponds to the argument requested
+     */
+    public static String getArgument(String[] commandLineArguments, String argName) {
+
+        if (commandLineArguments != null) {
+            for (int i = 0; i < commandLineArguments.length - 1; i++) {
+                if (commandLineArguments[i] == null ||
+                        commandLineArguments[i].length() == 0 ||
+                        commandLineArguments[i].charAt(0) != '-' ||
+                        commandLineArguments[i + 1] == null) {
+                    continue;
+                }
+                String tmpArg = commandLineArguments[i].substring(1);
+                if (tmpArg.equalsIgnoreCase(argName)) {
+                    String input = commandLineArguments[i + 1];
+                    if (input != null && !input.equals("")) {
+                        return input;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * For a map containing a set for the specified {@code mapKey}, adds the provided value to the set.
      * If there is no set for the {@code mapKey}, one will be created first. As we are using a {@link ConcurrentNavigableMap},

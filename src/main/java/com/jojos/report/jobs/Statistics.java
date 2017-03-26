@@ -2,7 +2,6 @@ package com.jojos.report.jobs;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -13,18 +12,13 @@ import java.util.Locale;
  * @author karanikasg@gmail.com
  */
 public class Statistics {
-	public static final Statistics NONE = new Statistics(0, 0, 0, 0, 0, 0, 0, 0, 0) {
+	private static final Statistics NONE = new Statistics(0, 0, 0, 0, 0, 0, 0, 0, 0) {
 		@Override
 		public String toString() {
 			return "NOT MEASURED";
 		}
 	};
-	private static final Comparator<Number> DOUBLE_COMPARATOR = new Comparator<Number>() {
-		@Override
-		public int compare(Number o1, Number o2) {
-			return Double.compare(o1.doubleValue(), o2.doubleValue());
-		}
-	};
+	private static final Comparator<Number> DOUBLE_COMPARATOR = Comparator.comparingDouble(Number::doubleValue);
 	private final double min;
 	private final double max;
 	private final double avg;
@@ -116,9 +110,9 @@ public class Statistics {
 		int percentile95Index = (int) Math.ceil(0.95 * numbers.size()) - 1;
 		double percentile90 = 0;
 		int percentile90Index = (int) Math.ceil(0.9 * numbers.size()) - 1;
-		Collections.sort(numbers, DOUBLE_COMPARATOR);
+		numbers.sort(DOUBLE_COMPARATOR);
 
-		double median = 0;
+		double median;
         int middle = numbers.size() / 2;
 		if (numbers.size() % 2 == 0) {
 		    median = (numbers.get(middle - 1).doubleValue() + numbers.get(middle).doubleValue()) / 2d;
@@ -171,7 +165,7 @@ public class Statistics {
 		return String
 			.format(
 				Locale.US,
-				"Statistics: Min: %8.2f, Max: %8.2f, 99%%: %8.2f, 95%%: %8.2f, 90%%: %8.2f, Average: %8.2f, Standard deviation: %8.2f, Observations: %8d",
+				"Statistics: Min: %8.2f, Max: %8.2f, 99%%: %8.2f, 95%%: %8.2f, 90%%: %8.2f, Average: %8.2f, Standard deviation: %8.2f, Median: %8.2f, Observations: %8d",
 				min, max, percentile99, percentile95, percentile90, avg, std, median, observations);
 	}
 }

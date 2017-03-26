@@ -6,7 +6,22 @@ package com.jojos.report.data;
  * @author karanikasg@gmail.com
  */
 public enum Genre {
-    FEMALE,
-    MALE,
-    NA;
+    FEMALE("F"),
+    MALE("M"),
+    NA("N/A");
+
+    private final String abbreviation;
+
+    Genre(String abbreviation) {
+        this.abbreviation = abbreviation;
+    }
+
+    public static Genre forCaseInsensitiveAbbreviation(String abbreviation) {
+        for (Genre genre : values()) {
+            if (genre.abbreviation.toUpperCase().equals(abbreviation)) {
+                return genre;
+            }
+        }
+        return NA;
+    }
 }

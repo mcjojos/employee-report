@@ -1,9 +1,12 @@
 package com.jojos.report.jobs;
 
 import com.jojos.report.ApplicationException;
+import com.jojos.report.Util;
 import com.jojos.report.data.AgeRange;
 import com.jojos.report.data.Department;
 import com.jojos.report.data.Employee;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +33,8 @@ import java.util.stream.Stream;
  * @author karanikasg@gmail.com
  */
 public class Loader {
+
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final List<Department> departments = new ArrayList<>();
     private final ConcurrentNavigableMap<Department, Set<Employee>> departmentToEmployee = new ConcurrentSkipListMap<>();
@@ -63,10 +68,14 @@ public class Loader {
             throw new NullPointerException("Null values not allowed for employees");
         }
 
-        validateDepartmentIdOrThrow(employee.getDepartmentId());
+        int departmentId = employee.getDepartmentId();
+        if (isInValidDepartmentId(departmentId)) {
+            log.error("Skipping employee {}. Invalid department id: {}. Departments size is {}", employee.getName(), departmentId, departmentsSize());
+            return;
+        }
 
         Department department = departments.get(employee.getDepartmentId() - 1);
-        CollectorsUtil.addToContainedSet(departmentToEmployee, department, employee);
+        Util.addToContainedSet(departmentToEmployee, department, employee);
         AgeRange ageRange = AgeRange.forAge(employee.getAge());
         // We've already initialized our EnumMap with empty sets, so this operation is safe.
         ageRanges.get(ageRange).add(employee);
@@ -84,6 +93,13 @@ public class Loader {
         return departmentToEmployee.get(department);
     }
 
+    public Set<Employee> getAllEmployees() {
+        return departmentToEmployee.values()
+                .stream()
+                .flatMap(Set::stream)
+                .collect(Collectors.toSet());
+    }
+
     /**
      * Gets all employees income for a specific department
      * @param department the department in question
@@ -92,7 +108,7 @@ public class Loader {
     public Collection<Double> getEmployeesIncomeForDepartment(Department department) {
         return getEmployeesForDepartment(department)
                 .stream()
-                .map(employee -> employee.getIncome())
+                .map(Employee::getIncome)
                 .collect(Collectors.toList());
     }
 
@@ -104,7 +120,7 @@ public class Loader {
     public Collection<Integer> getEmployeesAgeForDepartment(Department department) {
         return getEmployeesForDepartment(department)
                 .stream()
-                .map(employee -> employee.getAge())
+                .map(Employee::getAge)
                 .collect(Collectors.toList());
     }
 
@@ -116,7 +132,7 @@ public class Loader {
     public Collection<Double> getEmployeesIncomeForAgeRange(AgeRange ageRange) {
         return ageRanges.get(ageRange)
                 .stream()
-                .map(employee -> employee.getIncome())
+                .map(Employee::getIncome)
                 .collect(Collectors.toList());
     }
 
@@ -129,11 +145,9 @@ public class Loader {
      * then an {@link ApplicationException} is thrown.
      * Have in mind that the department ids start from 1.
      *
-     * @param departmentId the id of the deprtment to validate
+     * @param departmentId the id of the department to validate
      */
-    private void validateDepartmentIdOrThrow(int departmentId) throws ApplicationException {
-        if (departmentId < 1 || departmentId > departmentsSize()) {
-            throw new ApplicationException(String.format("Invalid department id: %d. Departments size is %d", departmentId, departmentsSize()));
-        }
+    private boolean isInValidDepartmentId(int departmentId) throws ApplicationException {
+        return departmentId < 1 || departmentId > departmentsSize();
     }
 }
