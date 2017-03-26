@@ -1,4 +1,4 @@
-package com.jojos.report.job;
+package com.jojos.report.jobs;
 
 import com.jojos.report.ApplicationException;
 import com.jojos.report.data.AgeRange;
@@ -6,15 +6,16 @@ import com.jojos.report.data.Department;
 import com.jojos.report.data.Employee;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
@@ -23,7 +24,7 @@ import java.util.stream.Stream;
  * The internal representation remains hidden from the outside world by providing only the API
  * necessary to expose retrieving elements and keeping them in order.
  *
- * TODO:
+ * TODO Impl Details:
  * More specifically the departments are kept sorted by alphabetic order.
  *
  * @author karanikasg@gmail.com
@@ -66,8 +67,9 @@ public class Loader {
 
         Department department = departments.get(employee.getDepartmentId() - 1);
         CollectorsUtil.addToContainedSet(departmentToEmployee, department, employee);
-
-
+        AgeRange ageRange = AgeRange.forAge(employee.getAge());
+        // We've already initialized our EnumMap with empty sets, so this operation is safe.
+        ageRanges.get(ageRange).add(employee);
     }
 
     public int departmentsSize() {
@@ -80,6 +82,42 @@ public class Loader {
 
     public Set<Employee> getEmployeesForDepartment(Department department) {
         return departmentToEmployee.get(department);
+    }
+
+    /**
+     * Gets all employees income for a specific department
+     * @param department the department in question
+     * @return an (unordered) collection of income
+     */
+    public Collection<Double> getEmployeesIncomeForDepartment(Department department) {
+        return getEmployeesForDepartment(department)
+                .stream()
+                .map(employee -> employee.getIncome())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets all employees age for a specific department
+     * @param department the department in question
+     * @return an (unordered) collection of ages
+     */
+    public Collection<Integer> getEmployeesAgeForDepartment(Department department) {
+        return getEmployeesForDepartment(department)
+                .stream()
+                .map(employee -> employee.getAge())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets all employees income for a specific {@link AgeRange}
+     * @param ageRange the range of age in question
+     * @return an (unordered) collection of income
+     */
+    public Collection<Double> getEmployeesIncomeForAgeRange(AgeRange ageRange) {
+        return ageRanges.get(ageRange)
+                .stream()
+                .map(employee -> employee.getIncome())
+                .collect(Collectors.toList());
     }
 
     public EnumMap<AgeRange, Set<Employee>> getAgeRanges() {

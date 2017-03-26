@@ -1,7 +1,7 @@
 package com.jojos.report.data;
 
 /**
- * Represent an employee. Having a relation with a department, a name, genre information and salary
+ * Represent an employee. Having a relation with a department, a name, genre information and income
  *
  * @author karanikasg@gmail.com
  */
@@ -10,14 +10,14 @@ public class Employee {
     private final int departmentId;
     private final String name;
     private final Genre genre;
-    private final double salary;
+    private final double income;
     private final int age;
 
-    public Employee(int departmentId, String name, Genre genre, double salary, int age) {
+    public Employee(int departmentId, String name, Genre genre, double income, int age) {
         this.departmentId = departmentId;
         this.name = name;
         this.genre = genre;
-        this.salary = salary;
+        this.income = income;
         this.age = age;
     }
 
@@ -33,8 +33,8 @@ public class Employee {
         return genre;
     }
 
-    public double getSalary() {
-        return salary;
+    public double getIncome() {
+        return income;
     }
 
     public int getAge() {

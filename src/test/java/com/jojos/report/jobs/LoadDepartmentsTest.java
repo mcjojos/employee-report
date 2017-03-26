@@ -1,7 +1,6 @@
-package com.jojos.report.job;
+package com.jojos.report.jobs;
 
 import com.jojos.report.data.Department;
-import com.jojos.report.job.Loader;
 import org.junit.Assert;
 import org.junit.Test;
 

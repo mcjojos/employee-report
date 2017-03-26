@@ -1,4 +1,4 @@
-package com.jojos.report.job;
+package com.jojos.report.jobs;
 
 import java.util.Collections;
 import java.util.Map;
