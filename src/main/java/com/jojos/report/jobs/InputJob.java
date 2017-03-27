@@ -4,8 +4,6 @@ import com.jojos.report.ApplicationException;
 import com.jojos.report.data.Department;
 import com.jojos.report.data.Employee;
 import com.jojos.report.data.Genre;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,13 +11,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Scanner;
+import java.util.logging.Logger;
 
 import static com.jojos.report.Util.AGES_FILE;
 import static com.jojos.report.Util.DEPARTMENTS_FILE;
 import static com.jojos.report.Util.EMPLOYEES_FILE;
 
 /**
- * The class is responsible for extracting from a folder all three files needed for the program:
+ * The class is responsible for extracting from a folder all three files
+ * needed for the program to calculate the statistics:
+ *
  * ages.csv
  * departments.csv
  * employees.csv
@@ -28,7 +29,7 @@ import static com.jojos.report.Util.EMPLOYEES_FILE;
  */
 public class InputJob {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass().getName());
 
     private final File ages;
     private final File departments;
@@ -44,7 +45,7 @@ public class InputJob {
 
         if (files == null) {
             String msg = String.format("This path %s does not denote a directory", path);
-            log.error(msg);
+            log.severe(msg);
             throw new ApplicationException(msg);
         }
 
@@ -61,7 +62,7 @@ public class InputJob {
                         tmpEmployees = file;
                         break;
                     default:
-                        log.info("skipping {}, not a valid file", file.getName());
+                        log.warning(String.format("skipping %s, not a valid file", file.getName()));
                         break;
                 }
             }
@@ -87,7 +88,7 @@ public class InputJob {
                 validateLineOrThrow(line);
                 loader.load(new Department(line));
             }
-            log.info("Loaded {} departments", loader.departmentsSize());
+            log.info(String.format("Loaded %d departments", loader.departmentsSize()));
         } catch (FileNotFoundException e) {
             // highly unlikely
             throw new ApplicationException(e.getMessage());
@@ -101,7 +102,7 @@ public class InputJob {
                 validateLineOrThrow(line);
                 String[] nameAge = line.split("\\s*,\\s*");
                 if (isInvalidSplitOfLine(nameAge, 2)) {
-                    log.error("Wrong format in input {} at line {}", ages.getName(), line);
+                    log.severe(String.format("Wrong format in input %s at line %d", ages.getName(), line));
                     continue;
                 }
                 namesAges.put(nameAge[0], Integer.parseInt(nameAge[1]));
@@ -118,17 +119,17 @@ public class InputJob {
                 validateLineOrThrow(line);
                 String[] employeeData = line.split("\\s*,\\s*");
                 if (isInvalidSplitOfLine(employeeData, 4)) {
-                    log.error("Wrong format in input {} at line {}", employees.getName(), line);
+                    log.severe(String.format("Wrong format in input %s at line %s", employees.getName(), line));
                     continue;
                 }
                 Employee employee = extractEmployeeFromArray(employeeData, namesAges);
                 if (Objects.isNull(employee)) {
-                    log.error("Skipping employee {}", line);
+                    log.severe("Skipping employee " + line);
                 } else {
                     loader.load(employee);
                 }
             }
-            log.info("Loaded {} employees", loader.getAllEmployees().size());
+            log.info(String.format("Loaded %d employees", loader.getAllEmployees().size()));
         } catch (FileNotFoundException e) {
             // highly unlikely
             throw new ApplicationException(e.getMessage());
@@ -146,7 +147,7 @@ public class InputJob {
             int age = ages.getOrDefault(name, -1);
             return new Employee(departmentId, name, genre, income, age);
         } catch (NumberFormatException e) {
-            log.error(e.getMessage());
+            log.severe(e.getMessage());
             return null;
         }
     }

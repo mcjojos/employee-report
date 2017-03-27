@@ -29,15 +29,8 @@ public class Statistics {
 	private final double percentile90;
 	private final int observations;
 
-	private Statistics(double min,
-                       double max,
-                       double avg,
-                       double std,
-                       double median,
-                       double percentile99,
-                       double percentile95,
-                       double percentile90,
-                       int observations) {
+	private Statistics(double min, double max, double avg, double std, double median,
+                       double percentile99, double percentile95, double percentile90, int observations) {
 		// NOTE: if more values are added, add them to toString() and machineReadable() as well!
 		this.min = min;
 		this.max = max;

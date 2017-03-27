@@ -5,8 +5,6 @@ import com.jojos.report.Util;
 import com.jojos.report.data.AgeRange;
 import com.jojos.report.data.Department;
 import com.jojos.report.data.Employee;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +16,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.concurrent.ConcurrentSkipListMap;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,14 +26,17 @@ import java.util.stream.Stream;
  * The internal representation remains hidden from the outside world by providing only the API
  * necessary to expose retrieving elements and keeping them in order.
  *
- * TODO Impl Details:
- * More specifically the departments are kept sorted by alphabetic order.
+ * @implNote The departments are kept sorted in an indexed based collection in alphabetic order. There is
+ * also a sorted map (which is also concurrent although not strictly needed with our provided implementation) that maps
+ * departments to Sets of employees. Also a similar mapping of {@link AgeRange}s to Set of employees exist and
+ * is implemented as an {@link EnumMap} since the AgeRange is just an enumeration. The latter is initialized at
+ * construction time.
  *
  * @author karanikasg@gmail.com
  */
 public class Loader {
 
-    private final Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = Logger.getLogger(getClass().getName());
 
     private final List<Department> departments = new ArrayList<>();
     private final ConcurrentNavigableMap<Department, Set<Employee>> departmentToEmployee = new ConcurrentSkipListMap<>();
@@ -63,6 +65,12 @@ public class Loader {
         }
     }
 
+    /**
+     * Store the provided employee in memory. A {@link NullPointerException}
+     * is thrown if the employee is null.
+     *
+     * @param employee the employee to store in memory
+     */
     public void load(Employee employee) {
         if (Objects.isNull(employee)) {
             throw new NullPointerException("Null values not allowed for employees");
@@ -70,7 +78,7 @@ public class Loader {
 
         int departmentId = employee.getDepartmentId();
         if (isInValidDepartmentId(departmentId)) {
-            log.error("Skipping employee {}. Invalid department id: {}. Departments size is {}", employee.getName(), departmentId, departmentsSize());
+            log.severe(String.format("Skipping employee %s. Invalid department id: %d. Departments size is %d", employee.getName(), departmentId, departmentsSize()));
             return;
         }
 
@@ -81,18 +89,35 @@ public class Loader {
         ageRanges.get(ageRange).add(employee);
     }
 
+    /**
+     * The size of all departments
+     * @return departments' size
+     */
     public int departmentsSize() {
         return departments.size();
     }
 
+    /**
+     * Getter for all departments
+     * @return stored departments
+     */
     public List<Department> getDepartments() {
         return departments;
     }
 
+    /**
+     * Getter for a collection of every employee that belong to the provided department
+     * @param department the department in question
+     * @return all the employees that belong to the specific department
+     */
     public Set<Employee> getEmployeesForDepartment(Department department) {
         return departmentToEmployee.get(department);
     }
 
+    /**
+     * Getter for all employees currently stored in memory
+     * @return A collection of distinct employees
+     */
     public Set<Employee> getAllEmployees() {
         return departmentToEmployee.values()
                 .stream()
@@ -136,6 +161,10 @@ public class Loader {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Getter for the {@link EnumMap} of all the age ranges
+     * @return the map of age ranges to set of employees
+     */
     public EnumMap<AgeRange, Set<Employee>> getAgeRanges() {
         return ageRanges;
     }

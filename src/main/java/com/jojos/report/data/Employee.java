@@ -1,7 +1,12 @@
 package com.jojos.report.data;
 
 /**
- * Represent an employee. Having a relation with a department, a name, genre information and income
+ * Represent an employee. Having
+ * a relation with a department,
+ * a name,
+ * genre information,
+ * income
+ * and age
  *
  * @author karanikasg@gmail.com
  */

@@ -3,8 +3,8 @@ package com.jojos.report;
 import com.jojos.report.jobs.InputJob;
 import com.jojos.report.jobs.Loader;
 import com.jojos.report.jobs.OutputJob;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import java.util.logging.Logger;
 
 /**
  * Entry point of the application
@@ -12,9 +12,7 @@ import org.slf4j.LoggerFactory;
  * @author karanikasg@gmail.com
  */
 public class App {
-    private final Logger log = LoggerFactory.getLogger(getClass());
-
-
+    private static final Logger log = Logger.getLogger(App.class.getName());
     private final String directoryPath;
 
     public App(String directoryPath) {
@@ -22,7 +20,7 @@ public class App {
     }
 
     public void start() {
-        log.info("Application started with input file directory: \"{}\"", directoryPath);
+        log.info(String.format("Application started with input file directory: \"%s\"", directoryPath));
         long start = System.currentTimeMillis();
 
 
@@ -39,17 +37,9 @@ public class App {
 
     public static void main(String[] args) {
         String inputPath = Util.getArgument(args, "input");
-        System.out.println("Hi There! Input folder is " + inputPath);
 
         App app = new App(inputPath);
         app.start();
 
-//        Stream<String> stream = null;
-//
-//        try {
-//            stream = Files.lines(Paths.get("inputFolder"));
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 }

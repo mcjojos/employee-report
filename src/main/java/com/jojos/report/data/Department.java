@@ -1,7 +1,8 @@
 package com.jojos.report.data;
 
 /**
- * Data object which is as its name suggests representing a department
+ * Data object which is representing a department
+ *
  * @author karanikasg@gmail.com
  */
 public class Department implements Comparable<Department> {

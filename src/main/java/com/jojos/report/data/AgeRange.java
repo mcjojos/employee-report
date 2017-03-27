@@ -3,7 +3,7 @@ package com.jojos.report.data;
 /**
  * enumeration that represents the age range with factor of ten.
  *
- * For simplicity we assume that the maximum life expectancy if no more than 100
+ * Assumed maximum life expectancy if not more than 129 years old.
  *
  * For each age-range assume that the lower limit is inclusive and the upper is exclusive,
  * e.g.:
