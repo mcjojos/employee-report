@@ -2,7 +2,7 @@
 Report generation for employees in a specific format
 
 ## Synopsis
-There are three commma separated files in data directory:
+There are three commma separated files in test/resources/data directory:
 ```
 departments.csv - list of departments
 employees.csv - first column contains position of department in alphabetically sorted department list, followed by employee name and salary
